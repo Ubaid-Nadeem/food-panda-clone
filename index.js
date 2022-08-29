@@ -16,6 +16,8 @@ process.on('uncaughtException', (error) => {
     console.log(error.stack)
 });
 
+let arry = []
+
 const cryptr = new Cryptr('myTotallySecretKey');
 let currentUser;
 // const decryptedString = cryptr.decrypt("9f1d72bd84a55ed0c2971bdcb3370ea6ea04c120ce7b1991ad3b7659eb6614e0fcf9ab13574510c1eb27bb8aa4169d9733aa35e31a06c02f5312a6a7b7037573db19db1964cc6e4e6a644b6c04388b30b6310cd20a311f31c3b1576aa4d5350f207e4faab68af01e");

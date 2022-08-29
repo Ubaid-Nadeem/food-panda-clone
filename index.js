@@ -6,9 +6,16 @@ const Cryptr = require('cryptr');
 
 
 const app = express();
+
 app.use(bodyparser.json({ limit: "5000kb" }));
 app.use(bodyparser.urlencoded({ extended: true }))
 app.use(cors());
+
+
+process.on('uncaughtException', (error) => {
+    console.log(error.stack)
+});
+
 const cryptr = new Cryptr('myTotallySecretKey');
 let currentUser;
 // const decryptedString = cryptr.decrypt("9f1d72bd84a55ed0c2971bdcb3370ea6ea04c120ce7b1991ad3b7659eb6614e0fcf9ab13574510c1eb27bb8aa4169d9733aa35e31a06c02f5312a6a7b7037573db19db1964cc6e4e6a644b6c04388b30b6310cd20a311f31c3b1576aa4d5350f207e4faab68af01e");
@@ -32,7 +39,7 @@ const schema = new mongoose.Schema({
 const Users = mongoose.model('users', schema);
 
 app.post('/checkEmail', (req, res) => {
-    // console.log(req.body)
+
     Users.find({ email: req.body.email }, ((err, data) => {
         res.send(data)
     }))
@@ -43,16 +50,16 @@ app.post('/reviewpassword', (req, res) => {
     const password = cryptr.encrypt(req.body.password);
 
     Users.find({ email: req.body.email }, ((err, data) => {
-    
+
         const password = cryptr.decrypt(data[0].password)
         console.log(password)
-        if (req.body.password == password ) {
+        if (req.body.password == password) {
             res.send(data)
         }
-        else{
-            res.send({error:"invalid Password"})
+        else {
+            res.send({ error: "invalid Password" })
         }
-        
+
     }))
 })
 
@@ -72,7 +79,7 @@ app.post('/createNewUser', (req, res) => {
     })
 
     res.send({
-        message:"Account has been created"
+        message: "Account has been created"
     })
 });
 

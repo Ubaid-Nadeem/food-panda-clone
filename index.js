@@ -54,7 +54,7 @@ app.post('/reviewpassword', (req, res) => {
     Users.find({ email: req.body.email }, ((err, data) => {
 
         const password = cryptr.decrypt(data[0].password)
-        console.log(password)
+    
         if (req.body.password == password) {
             res.send(data)
         }
@@ -84,5 +84,12 @@ app.post('/createNewUser', (req, res) => {
         message: "Account has been created"
     })
 });
+
+app.post('/getuser', (req, res) => {
+   
+    Users.find(req.body,(error,result)=>{
+        res.send(result)
+    })
+})
 
 app.listen(process.env.PORT || "400");

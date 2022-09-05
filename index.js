@@ -38,8 +38,31 @@ const schema = new mongoose.Schema({
     lastName: 'string',
     password: 'string'
 });
-const Users = mongoose.model('users', schema);
 
+
+const DishesSchema = new mongoose.Schema({
+    DishName: String,
+    Price: Number,
+    Dilvery: String
+});
+
+const ShopSchema = new mongoose.Schema({
+    city: String,
+    Dishes: [DishesSchema],
+    ShopName: String,
+});
+
+const dishSchema = new mongoose.Schema({
+    ShopName: String,
+    city: String,
+    Dish: { DishesSchema },
+    author: mongoose.Schema.Types.ObjectId
+});
+
+
+const Users = mongoose.model('users', schema);
+const Shop = mongoose.model('shops', ShopSchema);
+const Dish = mongoose.model('Dishes', dishSchema)
 app.post('/checkEmail', (req, res) => {
 
     Users.find({ email: req.body.email }, ((err, data) => {
@@ -54,7 +77,7 @@ app.post('/reviewpassword', (req, res) => {
     Users.find({ email: req.body.email }, ((err, data) => {
 
         const password = cryptr.decrypt(data[0].password)
-    
+
         if (req.body.password == password) {
             res.send(data)
         }
@@ -66,7 +89,7 @@ app.post('/reviewpassword', (req, res) => {
 })
 
 app.post('/createNewUser', (req, res) => {
-    console.log(req.body)
+    // console.log(req.body)
     const password = cryptr.encrypt(req.body.Password);
 
 
@@ -76,7 +99,7 @@ app.post('/createNewUser', (req, res) => {
         lastName: req.body.lastName,
         password: password
     })
-    user.save((err) => {
+    user.save((err, data) => {
         console.log(err)
     })
 
@@ -86,10 +109,41 @@ app.post('/createNewUser', (req, res) => {
 });
 
 app.post('/getuser', (req, res) => {
-   
-    Users.find(req.body,(error,result)=>{
+
+    Users.find(req.body, (error, result) => {
         res.send(result)
     })
 })
+
+app.post('/highrateddish', (req, res) => {
+    console.log(req.body)
+
+    // let AddDish = new Dish({
+    //     ShopName: req.body.ShopName,
+    //     city: req.body.city,
+    //     Dish: req.body.Dishes,
+    //     author: req.body.id
+    // })
+
+    // AddDish.save((err, data) => {
+    //     console.log(data)
+    //     res.send(data)
+    // })
+
+    // let newDish = new Shop({
+    //     city: req.body.city,
+    //     Dishes: [req.body.Dishes],
+    //     ShopName: req.body.ShopName
+    // })
+    // newDish.save((rer, data) => {
+    //     console.log(data)
+    // })
+
+    Shop.find({ city: req.body.city }, (eror, data) => {
+        console.log(data)
+        res.send(data)
+    })
+})
+
 
 app.listen(process.env.PORT || "400");

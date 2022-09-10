@@ -42,27 +42,37 @@ const schema = new mongoose.Schema({
 
 const DishesSchema = new mongoose.Schema({
     DishName: String,
+    Discription: String,
     Price: Number,
-    Dilvery: String
+    Delivery: String,
+    Location: String,
+    Rating: Number,
+    Duration: String
 });
 
 const ShopSchema = new mongoose.Schema({
-    city: String,
+    City: String,
     Dishes: [DishesSchema],
     ShopName: String,
+    Thumbnail: String
 });
 
 const dishSchema = new mongoose.Schema({
-    ShopName: String,
-    city: String,
-    Dish: { DishesSchema },
-    author: mongoose.Schema.Types.ObjectId
+    DishName: String,
+    Discription: String,
+    Price: Number,
+    Delivery: String,
+    Location: String,
+    Rating: Number,
+    Duration: String,
+    Author: { type: mongoose.Schema.Types.ObjectId, ref: "shops" }
 });
 
 
 const Users = mongoose.model('users', schema);
 const Shop = mongoose.model('shops', ShopSchema);
-const Dish = mongoose.model('Dishes', dishSchema)
+const Dish = mongoose.model('dishes', dishSchema)
+
 app.post('/checkEmail', (req, res) => {
 
     Users.find({ email: req.body.email }, ((err, data) => {
@@ -115,7 +125,7 @@ app.post('/getuser', (req, res) => {
     })
 })
 
-app.post('/highrateddish', (req, res) => {
+app.post('/getshops', (req, res) => {
     console.log(req.body)
 
     // let AddDish = new Dish({
@@ -130,20 +140,60 @@ app.post('/highrateddish', (req, res) => {
     //     res.send(data)
     // })
 
-    // let newDish = new Shop({
-    //     city: req.body.city,
+    // let newShop = new Shop({
+    //     City: req.body.City,
     //     Dishes: [req.body.Dishes],
-    //     ShopName: req.body.ShopName
+    //     ShopName: req.body.ShopName,
+    //     Thumbnail: req.body.Thumbnail
+
     // })
-    // newDish.save((rer, data) => {
+    // newShop.save((rer, data) => {
     //     console.log(data)
+    //     res.send(data)
     // })
 
-    Shop.find({ city: req.body.city }, (eror, data) => {
-        console.log(data)
+    // Dish.find({ Location: req.body.Location }, (eror, data) => {
+    //     res.send(data)
+    // })
+    // console.log(req.body)
+    Shop.find({ City : req.body.city }, (err, data) => {
         res.send(data)
     })
 })
+// app.post('/addDish', (req, res) => {
+//     // console.log(req.body)
+//     const NewDish = new Dish({
+//         DishName: req.body.DishName,
+//         Discription: req.body.Discription,
+//         Price: req.body.Price,
+//         Delivery: req.body.Delivery,
+//         Location: req.body.Location,
+//         Rating: req.body.Rating,
+//         Duration: req.body.Duration,
+//         Author: req.body.Autor
+//     })
+//     NewDish.save((err, data) => {
+//         console.log(data)
+//     })
+//     Dish.find({ Location: "Karachi" }).populate("Author").exec((err, data) => {
+//         res.send(data)
+//     })
 
 
+//     Shop.findOne({ _id: "63165baa892abc4b46245fd6" }).update({
+//         $push: {
+//             Dishes: {
+//                 "DishName": req.body.DishName,
+//                 "Discription": req.body.Discription,
+//                 "Price": req.body.Price,
+//                 "Delivery": req.body.Delivery,
+//                 "Location": req.body.Location,
+//                 "Rating": req.body.Rating,
+//                 "Duration": req.body.Duration
+//             }
+//         }
+//     }).exec()
+
+
+// })
 app.listen(process.env.PORT || "400");

@@ -131,8 +131,8 @@ app.post('/createNewUser', (req, res) => {
 });
 
 app.post('/getuser', (req, res) => {
-
-    Users.find(req.body, (error, result) => {
+    console.log(req.body.id)
+    Users.findOne({ _id: req.body.id }, (error, result) => {
         res.send(result)
     })
 })

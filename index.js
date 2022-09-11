@@ -156,10 +156,19 @@ app.post('/getshops', (req, res) => {
     //     res.send(data)
     // })
     // console.log(req.body)
-    Shop.find({ City : req.body.city }, (err, data) => {
+    Shop.find({ City: req.body.city }, (err, data) => {
         res.send(data)
     })
 })
+
+app.post('/viewshop', (req, res) => {
+    // console.log(req.body)
+    Shop.findOne({ _id: req.body.id }, (err, data) => {
+        res.send(data)
+    })
+})
+
+
 // app.post('/addDish', (req, res) => {
 //     // console.log(req.body)
 //     const NewDish = new Dish({

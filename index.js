@@ -84,9 +84,9 @@ app.post('/reviewpassword', (req, res) => {
 
     const password = cryptr.encrypt(req.body.password);
 
-    Users.find({ email: req.body.email }, ((err, data) => {
+    Users.findOne({ email: req.body.email }, ((err, data) => {
 
-        const password = cryptr.decrypt(data[0].password)
+        const password = cryptr.decrypt(data.password)
 
         if (req.body.password == password) {
             res.send(data)
@@ -102,20 +102,32 @@ app.post('/createNewUser', (req, res) => {
     // console.log(req.body)
     const password = cryptr.encrypt(req.body.Password);
 
+    Users.findOne({ email: req.body.email }, (err, data) => {
+        if (data == null) {
+            let user = new Users({
+                email: req.body.email,
+                fisrtName: req.body.firstName,
+                lastName: req.body.lastName,
+                password: password
+            })
+            user.save((err, data) => {
+                console.log(err)
+                res.send({
+                    message: "Account has been created",
+                    user: data
+                })
+            })
+        }
+        else {
+            res.send({
+                error: "This email is already use"
+            })
+        }
+    })
 
-    let user = new Users({
-        email: req.body.email,
-        fisrtName: req.body.firstName,
-        lastName: req.body.lastName,
-        password: password
-    })
-    user.save((err, data) => {
-        console.log(err)
-    })
 
-    res.send({
-        message: "Account has been created"
-    })
+
+
 });
 
 app.post('/getuser', (req, res) => {

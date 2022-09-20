@@ -32,11 +32,28 @@ db.on('open', function () {
     console.log('Connected to MOngoDB');
 });
 
+const order = new mongoose.Schema({
+    DishName: String,
+    Price: String,
+    Quantity: Number,
+    Shopid: String,
+    Dishid: { type: mongoose.Schema.Types.ObjectId, ref: "dishes" },
+    Status: String
+
+});
+
+
 const schema = new mongoose.Schema({
     email: 'string',
     fisrtName: 'string',
     lastName: 'string',
-    password: 'string'
+    password: 'string',
+    cart: {
+        order: [order],
+        SubTotal: Number,
+        Adress: String
+    },
+    orders: [order]
 });
 
 
@@ -72,6 +89,20 @@ const dishSchema = new mongoose.Schema({
 const Users = mongoose.model('users', schema);
 const Shop = mongoose.model('shops', ShopSchema);
 const Dish = mongoose.model('dishes', dishSchema)
+// app.post("/update", (req, res) => {
+//     console.log("update")
+//     Users.find({}, (err, data) => {
+//         // res.send(data)
+//         console.log(data)
+//     }).updateMany({
+//         cart: {
+//             order: [],
+//             SubTotal: 0,
+//             Adress: ''
+//         }
+
+//     }).exec()
+// })
 
 app.post('/checkEmail', (req, res) => {
 
@@ -180,7 +211,49 @@ app.post('/viewshop', (req, res) => {
     })
 })
 
+app.post('/getorder', (req, res) => {
 
+    console.log(req.body.userid)
+
+    // Users.updateOne({ _id: req.body.userid },
+    //     {
+    //         $push: {
+    //             order: {
+    //                 DishName: req.body.DishName,
+    //                 Price: req.body.Price,
+    //                 Quantity: req.body.Quantity,
+    //                 Shopid: req.body.Shopid,
+    //                 Dishid: req.body.Dishid,
+    //                 Status: req.body.DishName
+    //             }
+    //         }
+    //     }
+    // ).exec()
+
+})
+app.post('/myshop', (req, res) => {
+    console.log(req.body)
+    res.send(req.body)
+})
+app.post('/editprofile', (req, res) => {
+    console.log(req.body.email)
+    Users.findOne({ email: req.body.email }, (err, data) => {
+        const decryptedString = cryptr.decrypt(data.password);
+        if (decryptedString == req.body.password) {
+            const password = cryptr.encrypt(req.body.newpassword);
+            // console.log(password)
+            Users.updateOne({ email: req.body.email }, { password: password }).exec((err, data) => {
+                console.log(data)
+                res.send({ data: "updated" })
+            })
+        }
+        else {
+            res.send({ error: "passworderror" })
+        }
+
+    })
+
+})
 // app.post('/addDish', (req, res) => {
 //     // console.log(req.body)
 //     const NewDish = new Dish({
